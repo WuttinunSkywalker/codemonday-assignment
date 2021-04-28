@@ -1,0 +1,24 @@
+version: '3.9'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: assignment
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+  service:
+    image: node-server
+    depends_on:
+      - db
+    ports:
+      - '3000:3000'
+    environment:
+      - EXTERNAL_PORT=3000
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=assignment
+      - PGHOST=db
