@@ -4,7 +4,21 @@ dotenv.config({ path: './.env' });
 
 // SYNC DATABASE
 const db = require('./models/database');
-db.sequelize.sync();
+(async () => {
+  let retries = 5;
+  const interval = 1000;
+  while (retries) {
+    try {
+      await db.sequelize.sync();
+      break;
+    } catch (err) {
+      console.log(err);
+      retries--;
+      if (retries === 0) throw err;
+      await new Promise((resolve) => setTimeout(resolve, interval));
+    }
+  }
+})();
 
 // TEST DATABASE CONNECTION
 db.sequelize
